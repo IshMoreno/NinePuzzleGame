@@ -1,7 +1,11 @@
+/*
+ * This is an interactive puzzle game that has 9 available spaces with numbers 1-8 and an empty
+ * space to shift the numbers around. The goal of the game is to solve the puzzle by shifting the numbers around
+ * until they are in order with a blank space at the end.
+ */
 package application;
 
 import java.util.Random;
-
 import java.util.Scanner;
 
 public class NinePuzzleProject {
@@ -21,6 +25,12 @@ public class NinePuzzleProject {
 		while (space != 0) {
 
 			runPuzzle();
+			
+			//Check if the puzzle is solved
+			if (isSolved()) {
+				System.out.println("You have completed the puzzle!");
+				break;
+			}
 
 			System.out.print("Next move: ");
 			
@@ -55,59 +65,38 @@ public class NinePuzzleProject {
 		Random rdm = new Random();
 		
 		for (int i = 0; i < numbers.length; i++) {
-
 			int index = rdm.nextInt(i + 1);
 			
 			// Swapping values at index and i
 			int temp = numbers[index];
-
 			numbers[index] = numbers[i];
-
 			numbers[i] = temp;
-
 		}
 
 		int index = 0;
 		
 		// Adding the values in numbers array to the 3*3 array
 		for (int i = 0; i < puzzle.length; i++) {
-
 			for (int j = 0; j < puzzle[i].length; j++) {
-
 				puzzle[i][j] = numbers[index];
-
 				index++;
-
 			}
-
 		}
-
 	}
 
 	// Running puzzle
 	static void runPuzzle() {
-
 		for (int i = 0; i < puzzle.length; i++) {
-
 			for (int j = 0; j < puzzle[i].length; j++) {
-
 				if (puzzle[i][j] == BLANK) {
-
 					System.out.printf("%2s", " ");
-
 				} else {
-					
 					// Otherwise printing the number
 					System.out.printf("%2s", puzzle[i][j]);
-
+					}
 				}
-
-			}
-
 			System.out.println();
-
 		}
-
 	}
 	
 	// Making a move
@@ -115,100 +104,75 @@ public class NinePuzzleProject {
 		
 		// Finding the position of number
 		for (int i = 0; i < puzzle.length; i++) {
-
 			for (int j = 0; j < puzzle[i].length; j++) {
-
 				if (puzzle[i][j] == number) {
-					
 					// Found, getting the empty spot from this position
 					int emptySpot = findslot(i, j);
 
 					if (emptySpot == 1) {
-						
 						// Moving up
 						puzzle[i - 1][j] = number;
-
 						puzzle[i][j] = BLANK;
-
 					} else if (emptySpot == 2) {
-						
 						// Moving down
 						puzzle[i + 1][j] = number;
-
 						puzzle[i][j] = BLANK;
-
 					} else if (emptySpot == 3) {
-						
 						// Moving left
 						puzzle[i][j - 1] = number;
-
 						puzzle[i][j] = BLANK;
-
 					} else if (emptySpot == 4) {
-						
 						// Moving right
 						puzzle[i][j + 1] = number;
-
 						puzzle[i][j] = BLANK;
-
 					}
-
 					return;
-
 				}
-
 			}
-
 		}
-
 	}
 	
 	// Finding nearest empty spot one step away from row and column 
 	// Return 1 if up location is empty, 2 if down, 3 if left, 4 if right
 	// Return -1 if no empty spaces from this location
 	static int findslot(int row, int column) {
-		
 		// Validating row and column
-		if (row >= 0 && row < puzzle.length && column >= 0
-
-				&& column < puzzle[row].length) {
-			
+		if (row >= 0 && row < puzzle.length && column >= 0 && column < puzzle[row].length) {
 			// Checking if top spot is valid and empty
 			if ((row - 1) >= 0 && puzzle[row - 1][column] == BLANK) {
-
 				return 1;
-
 			}
-			
 			// Checking if bottom spot is valid and empty
-			if ((row + 1) < puzzle.length
-
-					&& puzzle[row + 1][column] == BLANK) {
-
+			if ((row + 1) < puzzle.length && puzzle[row + 1][column] == BLANK) {
 				return 2;
-
 			}
-			
 			// Checking if left spot is valid and empty
 			if ((column - 1) >= 0 && puzzle[row][column - 1] == BLANK) {
-
 				return 3;
-
 			}
-			
 			// Checking if right spot is valid and empty
-			if ((column + 1) < puzzle[row].length
-
-					&& puzzle[row][column + 1] == BLANK) {
-
+			if ((column + 1) < puzzle[row].length && puzzle[row][column + 1] == BLANK) {
 				return 4;
-
 			}
-
 		}
 		// Returning -1 if no empty spaces from the location
 		return -1;
-
 	}
-
+	static boolean isSolved() {
+		int correctValue = 1;
+		for (int i = 0; i < puzzle.length; i++) {
+			for (int j = 0; j < puzzle[i].length; j++) {
+				if (puzzle[i][j] != BLANK) {
+					if (puzzle[i][j] != correctValue) {
+						return false;
+					}
+					correctValue++;
+				} else if (i == puzzle.length - 1 && j == puzzle[i].length - 1) {
+					//Check if the last spot is the BLANK
+					return true;
+				}
+			}
+		}
+		return true;
+	}
 }
